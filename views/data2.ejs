@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <title>Data Table</title>
+    <style>
+        .inputcontmine>*:not(label):not(button) {
+            margin-left: 1.4%;
+            margin-right: 1.4%;
+        }
+
+        a {
+            text-decoration: none;
+            padding: 5px;
+            background-color: rgb(236, 227, 227);
+            border-radius: 8.5px;
+        }
+
+        .active {
+            color: red;
+            font-size: 1.5em;
+        }
+
+        a:active,
+        a:focus,
+        a:hover {
+            color: red;
+            text-decoration: none;
+        }
+
+        #pagination {
+            text-align: center;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .display {
+            display: inline;
+        }
+
+        th,
+        td {
+            padding-top: 2px;
+            padding-bottom: 2px;
+            padding-left: 4% !important;
+            min-width: 170px !important;
+            max-width: 170px !important;
+        }
+
+        th:first-child,
+        td:first-child {
+            min-width: 450px !important;
+            max-width: 450px !important;
+        }
+
+        /* tr:nth-child(odd) {
+            background: #CCC
+        }
+
+        th{
+            background-color: rgb(214, 96, 96);
+        }
+
+        tr:nth-child(even) {
+            background: #FFF
+        }*/
+
+        *::selection {
+            background-color: rgb(176, 189, 87);
+        }
+
+        table {
+            border-collapse: separate !important;
+        }
+
+
+        @media only screen and (max-width: 600px) {
+
+            th,
+            td {
+                padding-top: 1px;
+                padding-bottom: 1px;
+                padding-left: 2% !important;
+                min-width: 70px !important;
+                max-width: 70px !important;
+            }
+
+            th:first-child,
+            td:first-child {
+                min-width: 150px !important;
+                max-width: 150px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container inputcontmine" style="margin-bottom: 2%; margin-top: 2%;">
+        <label id="firstlabel" for="startdate">Start date : </label>
+        <input id="startdate" type="datetime-local">
+
+        <label for="enddate">End date : </label>
+        <input id="enddate" type="datetime-local">
+
+        <button id="filterbtn">Submit</button>
+    </div>
+    <div class="container">
+        <table id="data" class="table">
+            <thead>
+                <tr>
+                    <th id="header_date" onclick="sortTable(0);">Date ↑</th>
+                    <th id="header_voltage" onclick="sortTable(1);">Voltage</th>
+                    <th id="header_amper" onclick="sortTable(2);">Amper</th>
+                    <th id="header_watt" onclick="sortTable(3);">Watt</th>
+                </tr>
+            </thead>
+            <tbody id="dynamictabledata">
+                <!-- Dynamic Content-->
+            </tbody>
+        </table>
+        <div class="container">
+
+            <span id="pageinfo"></span>
+
+            <div id="pagination" class="container">
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+    <script>
+
+        let paginationbar = document.getElementById("pagination");
+
+        let header_date = document.getElementById("header_date");
+        let header_voltage = document.getElementById("header_voltage");
+        let header_amper = document.getElementById("header_amper");
+        let header_watt = document.getElementById("header_watt");
+
+        function resetHeaders() {
+            header_date.innerHTML = "Date";
+            header_voltage.innerHTML = "Voltage";
+            header_amper.innerHTML = "Amper";
+            header_watt.innerHTML = "Watt";
+        }
+
+        let addTr = (date, voltage, amper, watt) => {
+
+            let res = "";
+
+            let halfs = date.split(" ");
+            let firstHalf = halfs[0];
+            let secondHalf = halfs[1];
+
+            let firstHalfArr = firstHalf.split("-");
+            for (let i = firstHalfArr.length - 1; i >= 0; i--) {
+                if (i == 0) { res += (firstHalfArr[i]); break; }
+                res += (firstHalfArr[i] + "-");
+            }
+
+            res = res + " " + secondHalf;
+            date = res;
+
+            return `<tr>
+    
+    <td>${date}</td>
+    <td>${voltage}</td>
+    <td>${amper}</td>
+    <td>${watt}</td>
+
+    </tr>`;
+        };
+
+        function setRange(pagenum) {
+            let pages = document.getElementsByTagName("a");
+            let range = 6;
+
+            for (let i = 1; i < pages.length - 1; i++) {
+                let a = pages[i];
+                if (i >= pagenum - range && i < (pagenum + range - 2)) {
+                    a.classList.add("display");
+                    a.classList.remove("hide");
+                }
+                else {
+                    a.classList.remove("display");
+                    a.classList.add("hide");
+                }
+            }
+
+        }
+
+        function setPageInfo(pagenum, dataCount) {
+
+            let infobar = document.getElementById("pageinfo");
+            let lowlimit = 10 * (pagenum - 1) + 1;
+            let uplimit = 10 * (pagenum);
+            infobar.innerHTML = "You are viewing " + lowlimit + " to " + (uplimit < dataCount ? uplimit : dataCount) + " out of " + dataCount;
+        }
+
+        function setActive(element, dataCount, flag = true) {
+            let actives = document.getElementsByClassName("active");
+            for (let a of actives)
+                a.classList.remove("active");
+            element.classList.add("active");
+
+            console.log(element.getAttribute("rel"));
+
+            let sortBy = undefined;
+            let sortType = lastSortDirection ? "desc" : "asc";
+
+            switch (lastSortedColumn) {
+                case 0:
+                    sortBy = "date";
+                    break;
+                case 1:
+                    sortBy = "voltage";
+                    break;
+                case 2:
+                    sortBy = "amper";
+                    break;
+                case 3:
+                    sortBy = "watt";
+                    break;
+            }
+
+            sendRequest(lastStartDate, lastEndDate, element.getAttribute("rel"), sortBy, sortType);
+
+            if (flag) {
+                let pageNum = eval(element.getAttribute("rel"));
+
+                setDynamicRange(pageNum, dataCount);
+                setPageInfo(pageNum, dataCount);
+            }
+
+
+        }
+
+        function setDynamicRange(pageNum, dataCount) {
+            let pageCount = Math.ceil(dataCount / 10);
+            paginationbar.innerHTML = "";
+            if (pageCount <= 1)
+                paginationbar.innerHTML += addPage(1, true, dataCount);
+            else {
+                /*paginationbar.innerHTML += addPage(1, (pageNum == 1 ? true : false), dataCount);
+                for(let i = pageNum - 5; i < pageNum + 5; i++){
+                    if(i > 1){
+                        paginationbar.innerHTML += addPage(i, (i == pageNum ? true : false), dataCount);
+                    }
+                }*/
+                if (pageNum != 1)
+                    paginationbar.innerHTML += addPage(1, false, dataCount);
+                else
+                    paginationbar.innerHTML += addPage(1, true, dataCount);
+                for (let i = pageNum - 5; i < pageNum + 5; i++) {
+                    if ((i < 2 || i > pageCount - 1)) continue;
+                    if (i == pageNum)
+                        paginationbar.innerHTML += addPage(i, true, dataCount);
+                    else
+                        paginationbar.innerHTML += addPage(i, false, dataCount);
+
+                }
+                if (pageCount != 0 && pageCount != 1)
+                    if (pageNum != pageCount)
+                        paginationbar.innerHTML += addPage(pageCount, false, dataCount);
+                    else
+                        paginationbar.innerHTML += addPage(pageCount, true, dataCount);
+            }
+
+
+
+
+
+        }
+
+        function addPage(number, bool, dataCount) {
+            return `<a onclick='setActive(this, ${dataCount})' class='${bool ? "active" : ""}' rel='${number}'>${number}</a>`
+        }
+
+        /*function dynamingRanging(dataCount) {
+            console.log(dataCount);
+            let pageCount = Math.ceil(dataCount / 10);
+            for (let i = 1; i < 6; i++)
+                paginationbar.innerHTML += addPage(i, i == 1 ? true : false, dataCount);
+            paginationbar.innerHTML += addPage(pageCount, false, dataCount);
+        }*/
+        function setPaginationInDOM(dataCount, bool) {
+            let pageCount = Math.ceil(dataCount / 10);
+
+
+            paginationbar.innerHTML = "";
+
+            if (bool) {
+                setDynamicRange(1, dataCount);
+            }
+            else
+                for (let i = 1; i <= pageCount; i++) {
+                    console.log("hooo");
+                    paginationbar.innerHTML += addPage(i, i == 1 ? true : false, dataCount);
+                }
+
+            setPageInfo(1, dataCount);
+            setDynamicRange(1, dataCount);
+
+        }
+
+        function getDataCount(startDate, endDate, dynamicRanging = true) {
+            fetch(`http://localhost:3000/api/data/count?startdate=${startDate}&enddate=${endDate}`)
+                .then(response => response.json())
+                .then(result => {
+                    let dataCount = result.data[0].count;
+                    setPaginationInDOM(dataCount, dynamicRanging);
+                })
+        }
+
+        function sendRequest(startDate, endDate, page, sortBy = "date", sortType = "desc") {
+
+
+
+            fetch(`http://localhost:3000/api/data/get?startdate=${startDate}&enddate=${endDate}&page=${page}&sortby=${sortBy}&sorttype=${sortType}`)
+                .then(response => response.json())
+                .then(result => {
+                    dynamicTBody.innerHTML = '';
+
+                    for (let a of result.data) {
+                        let toAdd = addTr(a.date, a.voltage, a.amper, a.watt)
+                        //console.log(toAdd);
+                        dynamicTBody.innerHTML += toAdd;
+                    }
+
+                });
+
+
+
+
+        }
+
+
+
+        let startDate = document.getElementById('startdate');
+        let endDate = document.getElementById('enddate');
+        let dynamicTBody = document.getElementById("dynamictabledata");
+
+        console.log(new Date().toLocaleDateString());
+
+        let timeStart = new Date();
+        timeStart.setUTCHours(0, 0, 0, 0);
+
+        startDate.value = timeStart.toISOString().replace(" ", "T").slice(0, 16).replaceAll(".", "-");
+
+        let timeEnd = new Date();
+        //timeEnd.setUTCHours(23,59,59,999);
+        timeEnd.setUTCDate(timeEnd.getUTCDate() + 1);
+        timeEnd.setUTCHours(0, 0, 0, 0);
+
+
+        endDate.value = timeEnd.toISOString().replace(" ", "T").slice(0, 16).replaceAll(".", "-")
+
+        let filterbtn = document.getElementById("filterbtn");
+        filterbtn.onclick = () => {
+            lastStartDate = startDate.value;
+            lastEndDate = endDate.value;
+            sendRequest(startDate.value, endDate.value, 1, "date", "desc");
+            resetHeaders();
+            header_date.innerHTML += " ↑";
+            lastSortedColumn = 0;
+            lastSortDirection = true;
+            getDataCount(startDate.value, endDate.value, true);
+        };
+
+        sendRequest(startDate.value, endDate.value, 1, "date", "desc");
+        getDataCount(startDate.value, endDate.value, true);
+
+
+        let lastSortedColumn = 0; // 0 stands for date, 1 stands for voltage, 2 stands for ampere, 3 stands for watt
+        let lastSortDirection = true; // true stands for desc, false stands for asc
+
+        function sortTable(n) {
+            let sortType = undefined;
+            if (lastSortedColumn == n) {
+                lastSortDirection = !lastSortDirection;
+                sortType = lastSortDirection ? "desc" : "asc";
+            } else { sortType = "desc"; lastSortDirection = true; }
+
+            lastSortedColumn = n;
+
+
+            resetHeaders();
+
+
+            let arrow = (lastSortDirection ? " ↑" : " ↓");
+            let sortBy = undefined;
+            switch (n) {
+                case 0:
+                    header_date.innerHTML += arrow;
+                    sortBy = "date";
+                    break;
+                case 1:
+                    header_voltage.innerHTML += arrow;
+                    sortBy = "voltage";
+                    break;
+                case 2:
+                    header_amper.innerHTML += arrow;
+                    sortBy = "amper";
+                    break;
+                case 3:
+                    header_watt.innerHTML += arrow;
+                    sortBy = "watt";
+                    break;
+            }
+
+            let firsEl = document.getElementsByTagName("a")[0];
+
+            sendRequest(lastStartDate, lastEndDate, 1, sortBy, sortType);
+            getDataCount(lastStartDate, lastEndDate, true);
+            //setActive(firsEl, -1, false);
+            console.log("çalıştı");
+
+
+        }
+
+        var lastStartDate = startDate.value;
+        var lastEndDate = endDate.value;
+
+    </script>
+
+
+</body>
+
+</html>
