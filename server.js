@@ -1,8 +1,10 @@
 import express, { urlencoded } from 'express'
 import cors from "cors"
+import { config } from 'dotenv';
+config();
 
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000;
 
 import session from 'express-session';
 let sessionOptions = {
@@ -13,6 +15,7 @@ let sessionOptions = {
   saveUninitialized: true,
   resave:false
 };
+
 
 app.use(session(sessionOptions));
 

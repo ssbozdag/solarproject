@@ -220,7 +220,6 @@
                 a.classList.remove("active");
             element.classList.add("active");
 
-            console.log(element.getAttribute("rel"));
 
             let sortBy = undefined;
             let sortType = lastSortDirection ? "desc" : "asc";
@@ -293,13 +292,6 @@
             return `<a onclick='setActive(this, ${dataCount})' class='${bool ? "active" : ""}' rel='${number}'>${number}</a>`
         }
 
-        /*function dynamingRanging(dataCount) {
-            console.log(dataCount);
-            let pageCount = Math.ceil(dataCount / 10);
-            for (let i = 1; i < 6; i++)
-                paginationbar.innerHTML += addPage(i, i == 1 ? true : false, dataCount);
-            paginationbar.innerHTML += addPage(pageCount, false, dataCount);
-        }*/
         function setPaginationInDOM(dataCount, bool) {
             let pageCount = Math.ceil(dataCount / 10);
 
@@ -311,7 +303,6 @@
             }
             else
                 for (let i = 1; i <= pageCount; i++) {
-                    console.log("hooo");
                     paginationbar.innerHTML += addPage(i, i == 1 ? true : false, dataCount);
                 }
 
@@ -321,7 +312,7 @@
         }
 
         function getDataCount(startDate, endDate, dynamicRanging = true) {
-            fetch(`http://localhost:3000/api/data/count?startdate=${startDate}&enddate=${endDate}`)
+            fetch(`${'<%=host%>'}/api/data/count?startdate=${startDate}&enddate=${endDate}`)
                 .then(response => response.json())
                 .then(result => {
                     let dataCount = result.data[0].count;
@@ -333,14 +324,13 @@
 
 
 
-            fetch(`http://localhost:3000/api/data/get?startdate=${startDate}&enddate=${endDate}&page=${page}&sortby=${sortBy}&sorttype=${sortType}`)
+            fetch(`${'<%=host%>'}/api/data/get?startdate=${startDate}&enddate=${endDate}&page=${page}&sortby=${sortBy}&sorttype=${sortType}`)
                 .then(response => response.json())
                 .then(result => {
                     dynamicTBody.innerHTML = '';
 
                     for (let a of result.data) {
                         let toAdd = addTr(a.date, a.voltage, a.amper, a.watt)
-                        //console.log(toAdd);
                         dynamicTBody.innerHTML += toAdd;
                     }
 
@@ -357,7 +347,6 @@
         let endDate = document.getElementById('enddate');
         let dynamicTBody = document.getElementById("dynamictabledata");
 
-        console.log(new Date().toLocaleDateString());
 
         let timeStart = new Date();
         timeStart.setUTCHours(0, 0, 0, 0);
@@ -430,9 +419,6 @@
             sendRequest(lastStartDate, lastEndDate, 1, sortBy, sortType);
             getDataCount(lastStartDate, lastEndDate, true);
             //setActive(firsEl, -1, false);
-            console.log("çalıştı");
-
-
         }
 
         var lastStartDate = startDate.value;
