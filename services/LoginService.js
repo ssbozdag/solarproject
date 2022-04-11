@@ -12,4 +12,9 @@ export default class DataService{
         return data.data[0]['count(*)'] == 1 ? true : false; 
     }
 
+    async saveUser(username, password){
+        let a = await executequery(`INSERT INTO admins (username, password) VALUES ('${username}', '${password}')`);
+        return undefined;
+    }
+
 }

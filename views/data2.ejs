@@ -51,6 +51,10 @@
             display: inline;
         }
 
+        .page {
+            margin: 2px;
+        }
+
         th,
         td {
             padding-top: 2px;
@@ -64,6 +68,22 @@
         td:first-child {
             min-width: 450px !important;
             max-width: 450px !important;
+        }
+
+        .noselect {
+            -webkit-touch-callout: none;
+            /* iOS Safari */
+            -webkit-user-select: none;
+            /* Safari */
+            -khtml-user-select: none;
+            /* Konqueror HTML */
+            -moz-user-select: none;
+            /* Old versions of Firefox */
+            -ms-user-select: none;
+            /* Internet Explorer/Edge */
+            user-select: none;
+            /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
         }
 
         /* tr:nth-child(odd) {
@@ -84,6 +104,10 @@
 
         table {
             border-collapse: separate !important;
+        }
+
+        .pointer {
+            cursor: pointer;
         }
 
 
@@ -121,10 +145,10 @@
         <table id="data" class="table">
             <thead>
                 <tr>
-                    <th id="header_date" onclick="sortTable(0);">Date ↑</th>
-                    <th id="header_voltage" onclick="sortTable(1);">Voltage</th>
-                    <th id="header_amper" onclick="sortTable(2);">Amper</th>
-                    <th id="header_watt" onclick="sortTable(3);">Watt</th>
+                    <th id="header_date" class="pointer" onclick="sortTable(0);">Date ↑</th>
+                    <th id="header_voltage" class="pointer" onclick="sortTable(1);">Voltage</th>
+                    <th id="header_amper" class="pointer" onclick="sortTable(2);">Amper</th>
+                    <th id="header_watt" class="pointer" onclick="sortTable(3);">Watt</th>
                 </tr>
             </thead>
             <tbody id="dynamictabledata">
@@ -289,7 +313,7 @@
         }
 
         function addPage(number, bool, dataCount) {
-            return `<a onclick='setActive(this, ${dataCount})' class='${bool ? "active" : ""}' rel='${number}'>${number}</a>`
+            return `<a  onclick='setActive(this, ${dataCount})' class='${bool ? "active" : ""} pointer page noselect' rel='${number}'>${number}</a>`
         }
 
         function setPaginationInDOM(dataCount, bool) {

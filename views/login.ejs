@@ -31,15 +31,16 @@
             <form id="loginform" method="POST" action="/api/login" class="form">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input name="username" type="text" class="form-control" id="username" aria-describedby="emailHelp"
+                    <input required name="username" type="text" class="form-control" id="username" aria-describedby="emailHelp"
                         placeholder="Enter username">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input name="password" type="password" class="form-control" id="password" placeholder="Password">
+                    <input required name="password" type="password" class="form-control" id="password" placeholder="Password">
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Log In</button>
+                    <button name="login" type="submit" class="btn btn-primary">Log In</button>
+                    <button name="signup" style="margin-right: 3%;" type="submit" class="btn btn-secondary">Sign Up</button>
                 </div>
             </form>
 
@@ -51,10 +52,19 @@
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
 
-        let value = params.failed;
+        let failLogin = params.failed;
+        let registration = params.registration;
+        let alreadyExists = params.alreadyexists;
 
-        if (value == "true")
+        if (failLogin == "true")
             alert("Wrong Username or Password.")
+
+        if(registration == "true")
+            alert("Registration is successfull.");
+
+        if(alreadyExists == "true")
+            alert("User already exists.");
+
     </script>
 
 

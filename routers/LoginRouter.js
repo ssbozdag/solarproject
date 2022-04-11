@@ -1,5 +1,6 @@
 import express from 'express'
 import * as path from 'path';
+import Hasher from '../core/Hasher.js';
 
 const __dirname = path.resolve(path.dirname(''));
 
@@ -9,14 +10,24 @@ import LoginService from '../services/LoginService.js';
 const service = new LoginService();
 
 router.post('/', async (req, res) => {
+    let userExists = await service.authenticate(req.body.username, req.body.password);
 
-    let a = await service.authenticate(req.body.username, req.body.password);
-    if (a){
+    console.log(userExists);
+    console.log(req.body.login);
+
+    if (userExists && req.body.login != undefined){
         req.session.loggedin = true;
         res.redirect("/view/data")
     }
-    else {
+    else if(userExists && req.body.signup != undefined){
         req.session.loggedin = false;
+        res.redirect("/view/login?alreadyexists=true");
+    }
+    else if(!userExists && req.body.signup != undefined){
+        req.session.loggedin = false;
+        await service.saveUser(req.body.username, Hasher.hashBySHA512(req.body.password));
+        res.redirect("/view/login?registration=true");
+    } else {
         res.redirect("/view/login?failed=true");
     }
 });
