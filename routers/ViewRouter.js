@@ -12,8 +12,6 @@ router.get("/login", async (req, res) => {
    res.render(__dirname + "/views/login.ejs", { failed: false });
 });
 
-import { config } from 'dotenv';
-config();
 
 router.get('/data', async (req, res) => {
    if (req.session.loggedin) {
