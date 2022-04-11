@@ -13,13 +13,6 @@ router.get('/count', async(req, res, next) => {
 router.get('/get', async(req, res) => {
     let data = await service.getData(req.query.startdate, req.query.enddate, req.query.page, req.query.sortby, req.query.sorttype);;
     res.send(data);
-    /*if(req.query.sortBy){
-        let data = await service.sortDataBy(req.query.startdate, req.query.enddate, req.query.page, req.query.sortBy, req.query.sortType);
-        res.send(data);
-        return;
-    }
-    let data = await service.getDataDueDate(req.query.startdate, req.query.enddate);
-    res.send(data);*/
 })
 
 router.post("/add", async(req, res) => {

@@ -6,15 +6,58 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        button {
+            float: right;
+        }
+
+        .container {
+            padding: 18%;
+        }
+
+        fieldset{
+            border: 1px ;
+        }
+    </style>
 </head>
 
 <body>
-    <form method="POST" action="/api/login/a">
-        <input id="username" type="text" name="username">
-        <input id="pass" type="password" name="password">
-        <button id="submit">LOGIN!</button>
-    </form>
 
+    <div class="container">
+        <fieldset>
+            <legend>Log IN</legend>
+            <form id="loginform" method="POST" action="/api/login" class="form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input name="username" type="text" class="form-control" id="username" aria-describedby="emailHelp"
+                        placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input name="password" type="password" class="form-control" id="password" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Log In</button>
+                </div>
+            </form>
+
+        </fieldset>
+
+    </div>
+
+    <script>
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
+
+        console.log(params);
+
+        let value = params.failed;
+
+        if (value == "true")
+            alert("Wrong Username or Password.")
+    </script>
 
 
 </body>

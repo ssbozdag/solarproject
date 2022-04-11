@@ -34,8 +34,8 @@ app.listen(port, () => {
 import DataRouter from './routers/DataRouter.js';
 app.use("/api/data" , DataRouter);
 
-import UserRouter from './routers/UserRouter.js';
-app.use("/api/login" , UserRouter);
+import LoginRouter from './routers/LoginRouter.js';
+app.use("/api/login" , LoginRouter);
 
 import ViewRouter from './routers/ViewRouter.js';
 app.use("/view" , ViewRouter);
