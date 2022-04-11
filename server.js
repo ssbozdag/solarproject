@@ -11,7 +11,7 @@ let sessionOptions = {
     maxAge: /*20000*/30 * 60 * 1000 /*269999999999*/
   },
   saveUninitialized: true,
-  resave:true
+  resave:false
 };
 
 app.use(session(sessionOptions));
