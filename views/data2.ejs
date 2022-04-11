@@ -86,16 +86,20 @@
                                   supported by Chrome, Edge, Opera and Firefox */
         }
 
-        /* tr:nth-child(odd) {
-            background: #CCC
+        /*tr:nth-child(odd) {
+            background: rgb(155, 127, 138)
         }
 
         th{
-            background-color: rgb(214, 96, 96);
+            background-color: rgb(110, 148, 146);
         }
 
         tr:nth-child(even) {
-            background: #FFF
+            background: rgb(151, 138, 138)
+        }
+
+        body{
+            background-color: bisque;
         }*/
 
         *::selection {
@@ -139,16 +143,16 @@
         <label for="enddate">End date : </label>
         <input id="enddate" type="datetime-local">
 
-        <button id="filterbtn">Submit</button>
+        <button class="btn btn-primary" id="filterbtn">Submit</button>
     </div>
     <div class="container">
         <table id="data" class="table">
             <thead>
                 <tr>
-                    <th id="header_date" class="pointer" onclick="sortTable(0);">Date ↑</th>
-                    <th id="header_voltage" class="pointer" onclick="sortTable(1);">Voltage</th>
-                    <th id="header_amper" class="pointer" onclick="sortTable(2);">Amper</th>
-                    <th id="header_watt" class="pointer" onclick="sortTable(3);">Watt</th>
+                    <th id="header_date" class="pointer noselect" onclick="sortTable(0);">Date ↑</th>
+                    <th id="header_voltage" class="pointer noselect" onclick="sortTable(1);">Voltage</th>
+                    <th id="header_amper" class="pointer noselect" onclick="sortTable(2);">Amper</th>
+                    <th id="header_watt" class="pointer noselect" onclick="sortTable(3);">Watt</th>
                 </tr>
             </thead>
             <tbody id="dynamictabledata">
