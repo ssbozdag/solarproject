@@ -10,10 +10,13 @@ import LoginService from '../services/LoginService.js';
 const service = new LoginService();
 
 router.post('/', async (req, res) => {
-    //let userExists = await service.authenticate(req.body.username, req.body.password);
 
-    //console.log(userExists);
-    console.log(req.body);
+    let userExists = await service.authenticate(req.body.username, req.body.password);
+    let usernameFound = await service.search(req.body.username);
+
+    console.log(usernameFound);
+    console.log(userExists);
+    console.log(req.body.login);
 
     if (req.body.username == "a") {
         req.session.loggedin = true;
@@ -25,7 +28,7 @@ router.post('/', async (req, res) => {
         req.session.loggedin = true;
         return res.redirect("/view/data")
     }
-    else if(userExists && req.body.signup != undefined){
+    else if(usernameFound && req.body.signup != undefined){
         req.session.loggedin = false;
         res.send("alreadyExists");
         //res.redirect("/view/login?alreadyexists=true");
