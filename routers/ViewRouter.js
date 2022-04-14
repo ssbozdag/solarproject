@@ -9,7 +9,7 @@ router.get("/login", async (req, res) => {
    if (req.session.loggedin && req.session.loggedin == true) {
       res.redirect("/view/data")
    }
-   res.render(__dirname + "/views/login.ejs", { failed: false });
+   res.render(__dirname + "/views/login.ejs", {host: process.env.HOST + process.env.PORT});
 });
 
 

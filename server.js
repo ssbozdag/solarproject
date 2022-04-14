@@ -1,4 +1,4 @@
-import express, { urlencoded } from 'express'
+import express, { json, urlencoded } from 'express'
 import cors from "cors"
 import { config } from 'dotenv';
 config();
@@ -21,6 +21,7 @@ app.use(session(sessionOptions));
 
 app.use(cors())
 app.use(urlencoded({ extended: true })); // to support URL-encoded bodies
+app.use(json()); // to support URL-encoded bodies
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
