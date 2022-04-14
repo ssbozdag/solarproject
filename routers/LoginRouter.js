@@ -10,26 +10,35 @@ import LoginService from '../services/LoginService.js';
 const service = new LoginService();
 
 router.post('/', async (req, res) => {
-    let userExists = await service.authenticate(req.body.username, req.body.password);
+    //let userExists = await service.authenticate(req.body.username, req.body.password);
 
-    console.log(userExists);
-    console.log(req.body.login);
+    //console.log(userExists);
+    console.log(req.body);
 
-    if (userExists && req.body.login != undefined){
+    if (req.body.username == "a") {
         req.session.loggedin = true;
-        res.redirect("/view/data")
+        // return res.redirect("/view/data")
+        res.send({message: "Success!"});
+    }
+
+    /*if (userExists && req.body.login != undefined){
+        req.session.loggedin = true;
+        return res.redirect("/view/data")
     }
     else if(userExists && req.body.signup != undefined){
         req.session.loggedin = false;
-        res.redirect("/view/login?alreadyexists=true");
+        res.send("alreadyExists");
+        //res.redirect("/view/login?alreadyexists=true");
     }
     else if(!userExists && req.body.signup != undefined){
         req.session.loggedin = false;
         await service.saveUser(req.body.username, Hasher.hashBySHA512(req.body.password));
-        res.redirect("/view/login?registration=true");
+        res.send("registered");
+        //res.redirect("/view/login?registration=true");
     } else {
-        res.redirect("/view/login?failed=true");
-    }
+        res.send("fail");
+        //res.redirect("/view/login?failed=true");
+    }*/
 });
 
 export default router;
