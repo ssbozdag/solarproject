@@ -11,7 +11,9 @@ const service = new LoginService();
 
 router.post('/', async (req, res) => {
     let userExists = await service.authenticate(req.body.username, req.body.password);
+    let usernameFound = await service.search(req.body.username);
 
+    console.log(usernameFound);
     console.log(userExists);
     console.log(req.body.login);
 
@@ -19,7 +21,7 @@ router.post('/', async (req, res) => {
         req.session.loggedin = true;
         res.redirect("/view/data")
     }
-    else if(userExists && req.body.signup != undefined){
+    else if(usernameFound && req.body.signup != undefined){
         req.session.loggedin = false;
         res.redirect("/view/login?alreadyexists=true");
     }

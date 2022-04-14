@@ -7,6 +7,11 @@ export default class DataService{
 
     }
 
+    async search(username){
+        let data = await executequery(`SELECT count(*) FROM admins WHERE username = '${username}'`);
+        return data.data[0]['count(*)'] == 1 ? true : false; 
+    }
+
     async authenticate(username, password){
         let data = await executequery(`SELECT count(*) FROM admins WHERE username = '${username}' and password = '${Hasher.hashBySHA512(password)}'`);
         return data.data[0]['count(*)'] == 1 ? true : false; 
