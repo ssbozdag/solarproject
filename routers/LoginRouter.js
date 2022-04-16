@@ -9,39 +9,29 @@ const router = express.Router();
 import LoginService from '../services/LoginService.js';
 const service = new LoginService();
 
+const host = process.env.HOST + process.env.PORT
+
 router.post('/', async (req, res) => {
 
     let userExists = await service.authenticate(req.body.username, req.body.password);
-    let usernameFound = await service.search(req.body.username);
 
-    console.log(usernameFound);
     console.log(userExists);
-    console.log(req.body.login);
 
-    if (req.body.username == "a") {
-        req.session.loggedin = true;
-        // return res.redirect("/view/data")
-        res.send({message: "Success!"});
-    }
 
-    /*if (userExists && req.body.login != undefined){
+    if (userExists) {
         req.session.loggedin = true;
-        return res.redirect("/view/data")
+        res.send({ message: "Success!", redirect: `/view/data`});
     }
-    else if(usernameFound && req.body.signup != undefined){
-        req.session.loggedin = false;
-        res.send("alreadyExists");
-        //res.redirect("/view/login?alreadyexists=true");
-    }
-    else if(!userExists && req.body.signup != undefined){
-        req.session.loggedin = false;
-        await service.saveUser(req.body.username, Hasher.hashBySHA512(req.body.password));
-        res.send("registered");
-        //res.redirect("/view/login?registration=true");
-    } else {
-        res.send("fail");
-        //res.redirect("/view/login?failed=true");
-    }*/
+    else res.send({ message : "Fail"});
 });
 
+router.post('/new', async (req, res) => {
+    let usernameFound = await service.search(req.body.username);
+    console.log("50: new method");
+    if (usernameFound) res.send({ message: "AlreadyExists!" });
+    else if (!usernameFound) {
+        await service.saveUser(req.body.username, Hasher.hashBySHA512(req.body.password));
+        res.send({ message: "Registered" });
+    }
+})
 export default router;

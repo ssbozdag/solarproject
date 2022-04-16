@@ -41,7 +41,8 @@
                 </div>
                 <div class="form-group">
                     <button id="loginbtn" name="login" type="submit" class="btn btn-primary">Log In</button>
-                    <button id="signupbtn" name="signup" style="margin-right: 3%;" type="submit" class="btn btn-secondary">Sign
+                    <button id="signupbtn" name="signup" style="margin-right: 3%;" type="submit"
+                        class="btn btn-secondary">Sign
                         Up</button>
                 </div>
             </div>
@@ -64,54 +65,41 @@
             fetch(`${'<%=host%>'}/api/login`, {
                 method: 'POST',
                 headers: {
-                    'Accept': 'application/json, text/plain, /',
+                    'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify( { username: userName.value, password: passWord.value} )
+                body: JSON.stringify({ username: userName.value, password: passWord.value })
             })
                 .then(response => response.json())
                 .then(result => {
                     console.log(result);
-                    if(result.message == "Success!")
-                        window.location.href = `${'<%=host%>'}/view/data`;
+                    if (result.message == "Success!")
+                        window.location.href = result.redirect;
+                    else if (result.message == "Fail") alert("Username or password is wrong");
                 })
         };
 
         /* NOT IMPLEMENTED YET!! ALSO API/SIGNUP SHOULD BE IMPLEMENTED !! */
         /* .THEN FUNCTION MIGHT NOT BE WORKING PROPERLY IN THE 2 POST METHODS */
         signUpBtn.onclick = () => {
-            fetch(`${'<%=host%>'}/api/signup`, {
+            console.log("sign up button is clicked");
+            fetch(`${'<%=host%>'}/api/login/new`, {
                 method: 'POST',
                 headers: {
-                    'Accept': 'application/json, text/plain, /',
+                    'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify( { username: userName.value, password: passWord.value} )
+                body: JSON.stringify({ username: userName.value, password: passWord.value })
             })
                 .then(response => response.json())
                 .then(result => {
                     console.log(result);
+                    if (result.message == "AlreadyExists!") alert("User already exists!");
+                    else if (result.message == "Registered") alert("Successfully registered!");
                 })
         };
 
-        /*
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        const params = Object.fromEntries(urlSearchParams.entries());
 
-        let failLogin = params.failed;
-        let registration = params.registration;
-        let alreadyExists = params.alreadyexists;
-
-        if (failLogin == "true")
-            alert("Wrong Username or Password.")
-
-        if(registration == "true")
-            alert("Registration is successfull.");
-
-        if(alreadyExists == "true")
-            alert("User already exists.");
-
-        */
     </script>
 
 
