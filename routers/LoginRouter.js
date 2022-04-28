@@ -34,4 +34,9 @@ router.post('/new', async (req, res) => {
         res.send({ message: "Registered" });
     }
 })
+
+router.post('/logout', async(req, res) => {
+    req.session.loggedin = false;
+    res.send({redirect: "/view/login"});
+})
 export default router;
