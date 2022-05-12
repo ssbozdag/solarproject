@@ -412,6 +412,7 @@
         let lastSortedColumn = 0; // 0 stands for date, 1 stands for voltage, 2 stands for ampere, 3 stands for watt
         let lastSortDirection = true; // true stands for desc, false stands for asc
 
+
         function sortTable(n) {
             let sortType = undefined;
             if (lastSortedColumn == n) {
@@ -453,9 +454,13 @@
             //setActive(firsEl, -1, false);
         }
 
+
+        //last submited dates
         var lastStartDate = startDate.value;
         var lastEndDate = endDate.value;
 
+
+        //logout button and click
         let logoutbtn = document.getElementById("logout");
         logoutbtn.onclick = () => {
             fetch(`${'<%=host%>'}/api/login/logout`, {
@@ -471,6 +476,50 @@
                     window.location.href = result.redirect;
                 })
         }
+
+
+        //re-calculate data count and update infos for refreshed page
+        function refreshCountAnPagination(startDate, endDate, pageNum) {
+            fetch(`${'<%=host%>'}/api/data/count?startdate=${startDate}&enddate=${endDate}`)
+                .then(response => response.json())
+                .then(result => {
+                    let dataCount = result.data[0].count;
+                    setDynamicRange(pageNum, dataCount);
+                    setPageInfo(pageNum, dataCount);
+                })
+
+        }
+
+        //refreshing page
+        let refreasherTime = 1000 * 2 * 5;
+        let refresherInterval = setInterval(() => {
+
+            let activePage = document.getElementsByClassName("active")[0];
+            let pageNum = eval(activePage.getAttribute("rel"));
+
+            let sortBy = undefined;
+            let sortType = lastSortDirection ? "desc" : "asc";
+
+            switch (lastSortedColumn) {
+                case 0:
+                    sortBy = "date";
+                    break;
+                case 1:
+                    sortBy = "voltage";
+                    break;
+                case 2:
+                    sortBy = "amper";
+                    break;
+                case 3:
+                    sortBy = "watt";
+                    break;
+            }
+
+            sendRequest(lastStartDate, lastEndDate, pageNum, sortBy, sortType);
+            refreshCountAnPagination(lastStartDate, lastEndDate, pageNum);
+            console.log("page is refreshed");
+
+        }, refreasherTime);
 
     </script>
 
