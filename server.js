@@ -23,6 +23,24 @@ app.use(cors())
 app.use(urlencoded({ extended: true })); // to support URL-encoded bodies
 app.use(json()); // to support URL-encoded bodies
 
+app.enable('trust proxy')
+app.use(function(request, response, next) {
+
+  if (process.env.NODE_ENV != 'development' && !request.secure) {
+     return response.redirect("https://" + request.headers.host + request.url);
+  }
+
+  next();
+})
+/*app.all('*', function(req, res, next){
+  //console.log('req start: ',req.secure, req.hostname, req.url, app.get('port'));
+  if (req.secure) {
+      return next();
+  }
+
+  res.redirect('https://'+req.hostname + ':' + app.get('secPort') + req.url);
+});*/
+
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 

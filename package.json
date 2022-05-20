@@ -5,7 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel routers -d dist/routers && babel core -d dist/core && babel services -d dist/services && babel views -d dist/views && babel db -d dist/db && babel server.js -d dist",
+    "start": "npm run build && node dist/server.js"
   },
   "keywords": [],
   "author": "",
@@ -17,5 +19,11 @@
     "express": "^4.17.3",
     "express-session": "^1.17.2",
     "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.17.12",
+    "@babel/preset-env": "^7.17.12",
+    "babel-loader": "^8.2.5"
   }
 }
